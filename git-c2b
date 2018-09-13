@@ -1,0 +1,61 @@
+#!/bin/sh
+
+# Copyright 2018 Alexandros Frantzis
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+set -e
+
+usage() {
+    echo "git c2b [-h] [-n NUM_START] [BRANCH]"
+    echo ""
+    echo "For each commit (over the tracking branch) in the specified BRANCH"
+    echo "(or the current branch if no BRANCH is specified) create a branch"
+    echo "named <BRANCH>-(<NUM_START> + i) pointing to that commit. If"
+    echo "NUM_START is not specified the value 1 is used."
+    echo ""
+    echo "For example, if the current branch name is 'feature', git c2b will"
+    echo "create branches 'feature-1', 'feature-2', ... pointing to the first,"
+    echo "second, ...  commit of 'feature'."
+}
+
+branch_exists() {
+    [ -n "$(git rev-parse -q --verify "$1")" ]
+}
+
+while getopts "n:h" opt; do
+    case $opt in
+        n) num_start="$OPTARG" ;;
+        h) usage; exit 0 ;;
+        ?) usage; exit 1 ;;
+    esac
+done
+shift "$(($OPTIND-1))"
+
+branch=${1:-$(git rev-parse --abbrev-ref HEAD)}
+upstream=$(git rev-parse --abbrev-ref $branch@{u})
+
+count=${num_start:-1}
+
+parent=$upstream
+
+for commit in $(git rev-list --reverse $upstream..$branch); do
+    name=$branch-$count
+    git branch -q -f $name $commit
+    git branch -q $name -u $parent
+    parent=$name
+    count=$((count+1))
+done
+
+git log $upstream..$branch
