@@ -88,8 +88,8 @@ test_git_c2b_in_empty_branch_with_upstream_has_no_effect() {
     git checkout -b feature -t master
     assert "$GIT_C2B"
 
-    assert "[ "$(get_commit feature)" = "$(get_commit master)" ]"
-    assert "[ "$(get_num_branches)" -eq 2 ]"
+    assert "[ $(get_commit feature) = $(get_commit master) ]"
+    assert "[ $(get_num_branches) -eq 2 ]"
 
     destroy_repo $repo
 }
@@ -106,9 +106,9 @@ test_git_c2b_in_branch_with_upstream_creates_branches() {
 
     assert "$GIT_C2B"
 
-    assert "[ "$(get_commit feature-1)" = "$(get_commit feature~2)" ]"
-    assert "[ "$(get_commit feature-2)" = "$(get_commit feature~1)" ]"
-    assert "[ "$(get_commit feature-3)" = "$(get_commit feature)" ]"
+    assert "[ $(get_commit feature-1) = $(get_commit feature~2) ]"
+    assert "[ $(get_commit feature-2) = $(get_commit feature~1) ]"
+    assert "[ $(get_commit feature-3) = $(get_commit feature) ]"
 
     destroy_repo $repo
 }
@@ -125,9 +125,9 @@ test_git_c2b_with_branch_while_in_branch_creates_branches() {
 
     assert "$GIT_C2B feature"
 
-    assert "[ "$(get_commit feature-1)" = "$(get_commit feature~2)" ]"
-    assert "[ "$(get_commit feature-2)" = "$(get_commit feature~1)" ]"
-    assert "[ "$(get_commit feature-3)" = "$(get_commit feature)" ]"
+    assert "[ $(get_commit feature-1) = $(get_commit feature~2) ]"
+    assert "[ $(get_commit feature-2) = $(get_commit feature~1) ]"
+    assert "[ $(get_commit feature-3) = $(get_commit feature) ]"
 
     destroy_repo $repo
 }
@@ -145,9 +145,9 @@ test_git_c2b_with_branch_with_upstream_while_in_other_branch_creates_branches() 
     git checkout master
     assert "$GIT_C2B feature"
 
-    assert "[ "$(get_commit feature-1)" = "$(get_commit feature~2)" ]"
-    assert "[ "$(get_commit feature-2)" = "$(get_commit feature~1)" ]"
-    assert "[ "$(get_commit feature-3)" = "$(get_commit feature)" ]"
+    assert "[ $(get_commit feature-1) = $(get_commit feature~2) ]"
+    assert "[ $(get_commit feature-2) = $(get_commit feature~1) ]"
+    assert "[ $(get_commit feature-3) = $(get_commit feature) ]"
 
     destroy_repo $repo
 }
@@ -164,9 +164,9 @@ test_git_c2b_with_count_creates_correctly_numbered_branches() {
 
     assert "$GIT_C2B -n 5"
 
-    assert "[ "$(get_commit feature-5)" = "$(get_commit feature~2)" ]"
-    assert "[ "$(get_commit feature-6)" = "$(get_commit feature~1)" ]"
-    assert "[ "$(get_commit feature-7)" = "$(get_commit feature)" ]"
+    assert "[ $(get_commit feature-5) = $(get_commit feature~2) ]"
+    assert "[ $(get_commit feature-6) = $(get_commit feature~1) ]"
+    assert "[ $(get_commit feature-7) = $(get_commit feature) ]"
 
     destroy_repo $repo
 }
@@ -187,9 +187,9 @@ test_git_c2b_updates_branches() {
     commit_d=$(get_commit feature~1)
     commit_e=$(get_commit feature)
 
-    assert "[ "$(get_commit feature-1)" = "$commit_c" ]"
-    assert "[ "$(get_commit feature-2)" = "$commit_d" ]"
-    assert "[ "$(get_commit feature-3)" = "$commit_e" ]"
+    assert "[ $(get_commit feature-1) = $commit_c ]"
+    assert "[ $(get_commit feature-2) = $commit_d ]"
+    assert "[ $(get_commit feature-3) = $commit_e ]"
 
     # Update feature branch with new commits
     git reset --hard master
@@ -200,14 +200,14 @@ test_git_c2b_updates_branches() {
     assert "$GIT_C2B"
 
     # Check that created branches point to new commits
-    assert "[ "$(get_commit feature-1)" = "$(get_commit feature~2)" ]"
-    assert "[ "$(get_commit feature-1)" != "$commit_c" ]"
+    assert "[ $(get_commit feature-1) = $(get_commit feature~2) ]"
+    assert "[ $(get_commit feature-1) != $commit_c ]"
 
-    assert "[ "$(get_commit feature-2)" = "$(get_commit feature~1)" ]"
-    assert "[ "$(get_commit feature-1)" != "$commit_d" ]"
+    assert "[ $(get_commit feature-2) = $(get_commit feature~1) ]"
+    assert "[ $(get_commit feature-1) != $commit_d ]"
 
-    assert "[ "$(get_commit feature-3)" = "$(get_commit feature)" ]"
-    assert "[ "$(get_commit feature-1)" != "$commit_e" ]"
+    assert "[ $(get_commit feature-3) = $(get_commit feature) ]"
+    assert "[ $(get_commit feature-1) != $commit_e ]"
 
     destroy_repo $repo
 }
